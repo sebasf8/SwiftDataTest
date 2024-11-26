@@ -15,7 +15,8 @@ actor ItemActor: ItemRepository {
     }
 
     func insert(expense: ExpenseDTO) async throws {
-        let model = fetchExpense(id: expense.id) ?? Expense(timestamp: expense.timestamp, amount: expense.amount)
+        let model = fetchUpdatedExpense(dto: expense)
+
         modelContext.insert(model)
         try modelContext.save()
     }
@@ -25,6 +26,17 @@ actor ItemActor: ItemRepository {
 
         modelContext.delete(model)
         try modelContext.save()
+    }
+    
+    private func fetchUpdatedExpense(dto: ExpenseDTO) -> Expense {
+        guard let model = fetchExpense(id: dto.id) else {
+            return Expense(timestamp: dto.timestamp, amount: dto.amount)
+        }
+
+        model.amount = dto.amount
+        model.timestamp = dto.timestamp
+
+        return model
     }
 
     private func fetchExpense(id: PersistentIdentifier?) -> Expense? {
