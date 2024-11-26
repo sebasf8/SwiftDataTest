@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-class PersistenceStack {
+final class PersistenceStack: Sendable {
     static let shared: PersistenceStack = PersistenceStack()
     let modelContainer: ModelContainer
 

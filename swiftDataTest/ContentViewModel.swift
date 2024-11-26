@@ -10,11 +10,11 @@ import SwiftData
 
 @MainActor @Observable
 class ContentViewModel {
-    private(set) var expenses: [Expense] = []
+    private(set) var expenses: [ExpenseDTO] = []
 
-    let service: ItemActor
+    let service: ItemRepository
 
-    init(service: ItemActor) {
+    init(service: ItemRepository) {
         self.service = service
     }
 
@@ -22,12 +22,12 @@ class ContentViewModel {
         expenses = (try? await fetchData()) ?? []
     }
 
-    nonisolated func fetchData() async throws -> [Expense] {
+    nonisolated func fetchData() async throws -> [ExpenseDTO] {
         return try await service.fetchItems()
     }
 
     func addExpense() async {
-        let newItem = Expense(timestamp: Date(), amount: Double.random(in: 0...1000))
+        let newItem = ExpenseDTO(id: nil, timestamp: Date(), amount: Double.random(in: 0...1000))
         try? await service.insert(expense: newItem)
 
         await load()
